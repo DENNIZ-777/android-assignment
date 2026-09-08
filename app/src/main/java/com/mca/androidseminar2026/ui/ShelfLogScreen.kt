@@ -44,7 +44,7 @@ fun ShelfLogScreen(
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit,
     results: List<ContentListItemUiModel>,
-    selectedContentId: String?,
+    selectedContentId: Int?,
     onContentClick: (ContentListItemUiModel) -> Unit,
     selectedContentTitle: String,
     rating: String,
@@ -107,7 +107,10 @@ private fun CatalogRow(row: ContentListItemUiModel, isSelected: Boolean, onClick
                 Text(row.title, fontWeight = FontWeight.SemiBold)
             }
             Spacer(Modifier.height(4.dp))
-            Text("${row.creator} · ${row.year}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            val additionalInfo = row.pageCount?.let { "$it pages" }
+                ?: row.runningTimeMinutes?.let { "$it min" }
+                ?: ""
+            Text("${row.creator} · ${row.year} · $additionalInfo", color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (row.reviewSummary.isNotBlank()) {
                 Spacer(Modifier.height(8.dp))
                 Text(row.reviewSummary, color = Color(0xFF306A3A), style = MaterialTheme.typography.bodySmall)

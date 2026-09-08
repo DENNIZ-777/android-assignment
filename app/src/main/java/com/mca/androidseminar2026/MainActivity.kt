@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
     private val assignment = ShelfLogAssignment(RawContents.items)
 
     private var query by mutableStateOf("")
-    private var selectedContentId by mutableStateOf<String?>(null)
+    private var selectedContentId by mutableStateOf<Int?>(null)
     private var selectedContentTitle by mutableStateOf("")
     private var rating by mutableStateOf("")
     private var memo by mutableStateOf("")
