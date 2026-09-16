@@ -98,6 +98,14 @@ class ShelfLogAssignment(rawCatalog: List<Map<String, String>>) {
             }
             .sortedBy { content -> content.id }
             .map { content ->
+                val reviewSummary = reviewsByContentId[content.id]?.let { review ->
+                    if (review.memo.isEmpty()) {
+                        "평점 ${review.rating}점"
+                    } else {
+                        "평점 ${review.rating}점 · ${review.memo}"
+                    }
+                }.orEmpty()
+
                 when (content) {
                     is Book -> ContentListItemUiModel(
                         id = content.id,
@@ -107,6 +115,7 @@ class ShelfLogAssignment(rawCatalog: List<Map<String, String>>) {
                         year = content.year.toString(),
                         pageCount = content.pageCount,
                         runningTimeMinutes = null,
+                        reviewSummary = reviewSummary,
                     )
 
                     is Movie -> ContentListItemUiModel(
@@ -117,6 +126,7 @@ class ShelfLogAssignment(rawCatalog: List<Map<String, String>>) {
                         year = content.year.toString(),
                         pageCount = null,
                         runningTimeMinutes = content.runningTimeMinutes,
+                        reviewSummary = reviewSummary,
                     )
                 }
             }
@@ -128,7 +138,17 @@ class ShelfLogAssignment(rawCatalog: List<Map<String, String>>) {
         ratingText: String,
         memo: String,
     ): SaveReviewResult {
-        TODO("TODO 4. 평점을 검증하고, 같은 작품의 기록은 갱신하세요.")
+        // TODO 4. 평점을 검증하고, 같은 작품의 기록은 갱신하세요.
+        val rating = ratingText.toIntOrNull()
+        if (rating == null || rating !in 1..5) {
+            return SaveReviewResult.Failure
+        }
+        if (contents.none { content -> content.id == contentId }) {
+            return SaveReviewResult.Failure
+        }
+
+        reviewsByContentId[contentId] = Review(rating = rating, memo = memo)
+        return SaveReviewResult.Success
     }
 
     /** 모든 작품에서 감상 기록을 지우세요. */
