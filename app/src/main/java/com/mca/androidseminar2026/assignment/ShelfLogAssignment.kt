@@ -3,6 +3,33 @@ package com.mca.androidseminar2026.assignment
 import com.mca.androidseminar2026.model.SaveReviewResult
 import com.mca.androidseminar2026.model.ContentListItemUiModel
 
+private sealed interface Content {
+    val id: Int
+    val title: String
+    val year: Int
+}
+
+private data class Book(
+    override val id: Int,
+    override val title: String,
+    override val year: Int,
+    val author: String,
+    val pageCount: Int,
+) : Content
+
+private data class Movie(
+    override val id: Int,
+    override val title: String,
+    override val year: Int,
+    val director: String,
+    val runningTimeMinutes: Int,
+) : Content
+
+private data class Review(
+    val rating: Int,
+    val memo: String,
+)
+
 /**
  * [과제 구현 파일 1]
  *
@@ -23,6 +50,31 @@ class ShelfLogAssignment(rawCatalog: List<Map<String, String>>) {
     // init {
     //     contents = rawCatalog.map { ... }
     // }
+    private val contents: List<Content> = rawCatalog.map { rawContent ->
+        val id = rawContent.getValue("id").toInt()
+        val title = rawContent.getValue("title")
+        val year = rawContent.getValue("year").toInt()
+
+        when (val kind = rawContent.getValue("kind")) {
+            "book" -> Book(
+                id = id,
+                title = title,
+                year = year,
+                author = rawContent.getValue("author"),
+                pageCount = rawContent.getValue("pageCount").toInt(),
+            )
+
+            "movie" -> Movie(
+                id = id,
+                title = title,
+                year = year,
+                director = rawContent.getValue("director"),
+                runningTimeMinutes = rawContent.getValue("runningTimeMinutes").toInt(),
+            )
+
+            else -> error("Unsupported content kind: $kind")
+        }
+    }
 
     // TODO 2. 작품별 감상 기록을 저장하는 방식을 결정하세요.
     // 각 기록에는 평점과 메모가 필요합니다.
@@ -30,6 +82,7 @@ class ShelfLogAssignment(rawCatalog: List<Map<String, String>>) {
     // 아래 방식 중 하나를 선택하거나, 다른 방식을 사용해도 됩니다.
     // - 위에서 만든 작품 객체 안에 감상 기록을 포함한다.
     // - 작품 ID를 프로퍼티로 가지는, 감상 기록 저장용 객체를 새로 만든다.
+    private val reviewsByContentId = mutableMapOf<Int, Review>()
 
     /** 검색 결과를 ContentListItemUiModel로 변환해 반환하세요. */
     fun search(query: String): List<ContentListItemUiModel> {
