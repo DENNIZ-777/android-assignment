@@ -87,7 +87,39 @@ class ShelfLogAssignment(rawCatalog: List<Map<String, String>>) {
     /** 검색 결과를 ContentListItemUiModel로 변환해 반환하세요. */
     fun search(query: String): List<ContentListItemUiModel> {
         // TODO 3. 빈 검색어일 경우엔 ContentListItemUiModel로 변환된 Catalog 전체를, 그 외에는 제목/저자 or 감독에 해당 query가 들어간 것들에 대해 결과를 반환하세요.
-        return emptyList()
+        return contents
+            .filter { content ->
+                query.isEmpty() ||
+                    content.title.contains(query, ignoreCase = true) ||
+                    when (content) {
+                        is Book -> content.author.contains(query, ignoreCase = true)
+                        is Movie -> content.director.contains(query, ignoreCase = true)
+                    }
+            }
+            .sortedBy { content -> content.id }
+            .map { content ->
+                when (content) {
+                    is Book -> ContentListItemUiModel(
+                        id = content.id,
+                        typeLabel = "책",
+                        title = content.title,
+                        creator = content.author,
+                        year = content.year.toString(),
+                        pageCount = content.pageCount,
+                        runningTimeMinutes = null,
+                    )
+
+                    is Movie -> ContentListItemUiModel(
+                        id = content.id,
+                        typeLabel = "영화",
+                        title = content.title,
+                        creator = content.director,
+                        year = content.year.toString(),
+                        pageCount = null,
+                        runningTimeMinutes = content.runningTimeMinutes,
+                    )
+                }
+            }
     }
 
     /** 입력을 검증하고 감상 기록을 추가하거나 기존 기록을 갱신하세요. */
