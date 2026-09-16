@@ -1,6 +1,7 @@
 package com.mca.androidseminar2026.assignment
 
 import android.content.Context
+import android.widget.Toast
 
 /**
  * [과제 구현 파일 2]
@@ -13,9 +14,11 @@ object ContextPractice {
         activityContext: Context,
         applicationContext: Context,
     ) {
-        // 선택한 Context:
-        // 이 Context를 사용해야 하는 이유:
-        TODO("TODO 6. 두 Context 중 하나만 사용해 저장 완료 Toast를 띄우세요.")
+        // 선택한 Context: applicationContext
+        // 이 Context를 사용해야 하는 이유: Toast는 Activity의 화면에 붙는 UI가 아니므로,
+        // Activity의 생명 주기에 영향받지 않는 applicationContext로도 안전하게 표시할 수 있습니다.
+        // TODO 6. 두 Context 중 하나만 사용해 저장 완료 Toast를 띄우세요.
+        Toast.makeText(applicationContext, "감상 기록을 저장했습니다.", Toast.LENGTH_SHORT).show()
     }
 
     fun showClearConfirmation(
