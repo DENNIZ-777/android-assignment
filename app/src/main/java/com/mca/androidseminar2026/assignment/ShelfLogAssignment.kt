@@ -153,6 +153,6 @@ class ShelfLogAssignment(rawCatalog: List<Map<String, String>>) {
 
     /** 모든 작품에서 감상 기록을 지우세요. */
     fun clearReviews() {
-        TODO("TODO 5. 모든 작품에서 감상 기록을 지우세요.")
+        reviewsByContentId.clear()
     }
 }

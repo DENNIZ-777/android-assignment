@@ -1,5 +1,6 @@
 package com.mca.androidseminar2026.assignment
 
+import android.app.AlertDialog
 import android.content.Context
 import android.widget.Toast
 
@@ -26,8 +27,14 @@ object ContextPractice {
         applicationContext: Context,
         onConfirmed: () -> Unit,
     ) {
-        // 선택한 Context:
-        // 이 Context를 사용해야 하는 이유:
-        TODO("TODO 7. 두 Context 중 하나만 사용해 전체 기록 삭제 확인 Dialog를 띄우세요.")
+        // 선택한 Context: activityContext
+        // 이 Context를 사용해야 하는 이유: Dialog는 Activity의 화면 위에 표시되므로,
+        // 화면의 테마와 Window 토큰을 가진 activityContext가 필요합니다.
+        AlertDialog.Builder(activityContext)
+            .setTitle("전체 기록 삭제")
+            .setMessage("저장한 모든 감상 기록을 삭제할까요?")
+            .setNegativeButton("취소", null)
+            .setPositiveButton("삭제") { _, _ -> onConfirmed() }
+            .show()
     }
 }
